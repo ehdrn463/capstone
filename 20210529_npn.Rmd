@@ -1,0 +1,256 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+library(readxl)
+library("qgraph")
+library("bootnet")
+library("IsingFit")
+library("IsingSampler")
+library("graphicalVAR")
+library("mlVAR")
+library("reshape2")
+library("ggplot2")
+library("lavaan")
+library("lme4")
+library("glmnet")
+library("depmixS4")
+library("huge")
+library("BayesFactor")
+library("ltm")
+library("ega")
+library(igraph)
+```
+
+
+```{r}
+#Calculate and plot network
+psp_swn_Graph_lassoall <- qgraph::qgraph(psp_swn_corMatall, graph = "glasso", layout = "spring", tuning = 0.5, sampleSize = nrow(psp_swn_allomit), minimum = 0, maximum = 1, details = TRUE, esize = 20, lambda.min.ratio = 0.01,  cut = 0.15, groups =  list("psp" = 1:4, "swn" = 5:24), nodeNames = names(psp_swn_allomit), legend.cex = 0.45, vsize = 8, esize = 25, palette = 'pastel', posCol = "blue", negCol = "red",color = c("red", "yellow", "grey", "blue"), borders = FALSE, vTrans = 200, details = TRUE)
+```
+
+
+```{r}
+# Compute and plot centrality index
+psp_swn_centResall <- centrality(psp_swn_Graph_lassoall)
+psp_swn_centResall$OutDegree
+psp_swn_centResall$Closeness
+psp_swn_centResall$Betweenness
+psp_swn_centralityPlot = centralityPlot(psp_swn_Graph_lassoall, orderBy = "Strength")
+
+```
+```{r}
+
+```
+
+
+```{r}
+#Edges 95% confidence intervals
+psp_swn_resultsall_npn <- estimateNetwork(psp_swn_allomit, default = "EBICglasso", corMethod = "npn", tuning = 0.5)
+psp_swn_boot1all_npn <- bootnet(psp_swn_resultsall_npn, nBoots = 2500,nCores = 8, type = "nonparametric")
+plot(psp_swn_boot1all_npn, labels = FALSE, order = "sample")
+print(psp_swn_boot1all_npn)
+summary(psp_swn_boot1all_npn)
+```
+
+```{r}
+# Network stability
+psp_swn_networkall_npn = estimateNetwork(psp_swn_allomit, default = "EBICglasso", corMethod = "npn", tuning = 0.5, refit = TRUE)
+psp_swn_boot2all_npn = bootnet(psp_swn_networkall_npn, nBoots = 2500,type = "case", nCores = 8)
+plot(psp_swn_boot2all_npn)
+
+
+```
+
+```{r}
+print(psp_swn_boot2all_npn)
+```
+
+
+```{r}
+
+summary(psp_swn_boot2all_npn)
+```
+
+```{r}
+# CS central stabilit coefficient (should be above 0.25, and is good if >0.5)
+psp_swn_corStability_npn = corStability(psp_swn_boot2all_npn)
+psp_swn_corStability_npn
+```
+
+
+```{r}
+
+```
+
+```{r}
+```
+
+
+```{r}
+small_scl_panss_Graph_lassoall <- qgraph::qgraph(small_scl_panss_corMatall, graph = "glasso", layout = "spring", tuning = 0.5, sampleSize = nrow(small_scl_panss_data_allomit), minimum = 0, maximum = 1, details = TRUE, esize = 20, lambda.min.ratio = 0.01,  cut = 0.15, groups =  list("scl" = 1:9, "scl" = 10:13), nodeNames = names(small_scl_panss_data_allomit), legend.cex = 0.45, vsize = 8, esize = 25, palette = 'pastel', posCol = "blue", negCol = "red",color = c("red", "yellow", "grey", "blue"), borders = FALSE, vTrans = 200, details = TRUE)
+```
+```{r}
+
+```
+
+
+```{r}
+# Compute and plot centrality index
+small_scl_panss_centResall <- centrality(small_scl_panss_Graph_lassoall)
+small_scl_panss_centResall$OutDegree
+small_scl_panss_centResall$Closeness
+small_scl_panss_centResall$Betweenness
+small_scl_panss_centralityPlot = centralityPlot(small_scl_panss_Graph_lassoall, orderBy = "Strength")
+```
+```{r}
+# Compute and plot centrality index
+small_scl_panss_spearman_centResall <- centrality(small_scl_panss_spearman_Graph_lassoall)
+small_scl_panss_spearman_centResall$OutDegree
+small_scl_panss_spearman_centResall$Closeness
+small_scl_panss_spearman_centResall$Betweenness
+small_scl_panss_spearman_centralityPlot = centralityPlot(small_scl_panss_spearman_Graph_lassoall, orderBy = "Strength")
+```
+```{r}
+# Compute and plot centrality index
+small_scl_panss_kendall_centResall <- centrality(small_scl_panss_kendall_Graph_lassoall)
+small_scl_panss_kendall_centResall$OutDegree
+small_scl_panss_kendall_centResall$Closeness
+small_scl_panss_kendall_centResall$Betweenness
+small_scl_panss_kendall_centralityPlot = centralityPlot(small_scl_panss_kendall_Graph_lassoall, orderBy = "Strength")
+```
+
+
+```{r}
+#Edges 95% confidence intervals
+small_scl_panss_resultsall_npn <- estimateNetwork(small_scl_panss_data_allomit, default = "EBICglasso", corMethod = "npn", tuning = 0.5)
+small_scl_panss_boot1all_npn <- bootnet(small_scl_panss_resultsall_npn, nBoots = 2500,nCores = 8, type = "nonparametric")
+plot(small_scl_panss_boot1all_npn, labels = FALSE, order = "sample")
+
+```
+```{r}
+plot(small_scl_panss_boot1all_npn, labels = TRUE, order = "sample")
+```
+
+```{r}
+print(small_scl_panss_boot1all_npn)
+```
+```{r}
+summary(small_scl_panss_boot1all_npn)
+```
+
+
+```{r}
+# Network stability
+small_scl_panss_networkall_npn = estimateNetwork(small_scl_panss_data_allomit, default = "EBICglasso", corMethod = "npn", tuning = 0.5, refit = TRUE)
+small_scl_panss_boot2all_npn = bootnet(small_scl_panss_networkall_npn, nBoots = 2500,type = "case", nCores = 8)
+plot(small_scl_panss_boot2all_npn)
+```
+```{r}
+
+
+
+
+```
+
+
+```{r}
+
+```
+
+
+```{r}
+print(small_scl_panss_boot2all_npn)
+```
+
+
+```{r}
+summary(small_scl_panss_boot2all_npn)
+```
+
+```{r}
+# CS central stabilit coefficient (should be above 0.25, and is good if >0.5)
+small_scl_panss_corStability_npn = corStability(small_scl_panss_boot2all_npn)
+small_scl_panss_corStability_npn
+```
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+small_scl_cgi_Graph_lassoall = qgraph::qgraph(small_scl_cgi_data_allomit_corMatall, graph = "glasso", layout = "spring", tuning = 0.5, sampleSize = nrow(small_scl_cgi_data_allomit), minimum = 0, maximum = 1, details = TRUE, esize = 20, lambda.min.ratio = 0.01,  cut = 0.15, groups =  list("scl" = 1:9, "cgi" = 10:13), nodeNames = names(small_scl_cgi_data_allomit), legend.cex = 0.45, vsize = 8, esize = 25, palette = 'pastel', posCol = "blue", negCol = "red",color = c("red", "yellow", "grey", "blue"), borders = FALSE, vTrans = 200, details = TRUE)
+```
+
+
+```{r}
+# Compute and plot centrality index
+small_scl_cgi_centResall <- centrality(small_scl_cgi_Graph_lassoall)
+small_scl_cgi_centResall$OutDegree
+small_scl_cgi_centResall$Closeness
+small_scl_cgi_centResall$Betweenness
+small_scl_cgi_centralityPlot = qgraph::centralityPlot(small_scl_cgi_Graph_lassoall, orderBy = "Strength")
+```
+```{r}
+small_scl_cgi_spearman_centResall <- centrality(small_scl_cgi_spearman_Graph_lassoall)
+small_scl_cgi_spearman_centResall$OutDegree
+small_scl_cgi_spearman_centResall$Closeness
+small_scl_cgi_spearman_centResall$Betweenness
+small_scl_cgi_spearman_centralityPlot = qgraph::centralityPlot(small_scl_cgi_spearman_Graph_lassoall, orderBy = "Strength")
+```
+
+```{r}
+small_scl_cgi_kendall_centResall <- centrality(small_scl_cgi_kendall_Graph_lassoall)
+small_scl_cgi_kendall_centResall$OutDegree
+small_scl_cgi_kendall_centResall$Closeness
+small_scl_cgi_kendall_centResall$Betweenness
+small_scl_cgi_centralityPlot = qgraph::centralityPlot(small_scl_cgi_kendall_Graph_lassoall, orderBy = "Strength")
+```
+
+
+```{r}
+#Edges 95% confidence intervals
+small_scl_cgi_resultsall_npn <- estimateNetwork(small_scl_cgi_data_allomit, default = "EBICglasso", corMethod = "npn", tuning = 0.5)
+small_scl_cgi_boot1all_npn <- bootnet(small_scl_cgi_resultsall_npn, nBoots = 2500,nCores = 8, type = "nonparametric")
+plot(small_scl_cgi_boot1all_npn, labels = FALSE, order = "sample")
+```
+
+
+```{r}
+print(small_scl_cgi_boot1all_npn)
+```
+
+```{r}
+summary(small_scl_cgi_boot1all_npn)
+```
+
+
+
+```{r}
+# Network stability
+small_scl_cgi_networkall_npn = estimateNetwork(small_scl_cgi_data_allomit, default = "EBICglasso", corMethod = "npn", tuning = 0.5, refit = TRUE)
+small_scl_cgi_boot2all_npn = bootnet(small_scl_cgi_networkall_npn, nBoots = 2500,type = "case", nCores = 8)
+plot(small_scl_cgi_boot2all_npn)
+```
+
+
+```{r}
+print(small_scl_cgi_boot2all_npn)
+
+```
+
+
+```{r}
+summary(small_scl_cgi_boot2all_npn)
+```
+
+```{r}
+# CS central stabilit coefficient (should be above 0.25, and is good if >0.5)
+small_scl_cgi_corStability_npn = corStability(small_scl_cgi_boot2all_npn)
+small_scl_cgi_corStability_npn
+```
+
+

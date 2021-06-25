@@ -1,0 +1,378 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+# 필요한 라이브러리 불러오기
+install.packages('ppcor')
+install.packages('naniar')
+library(naniar)
+library(readxl)
+library(qgraph)
+library(psych)
+library(polycor)
+library(corrplot)
+library(ppcor)
+```
+
+
+```{r}
+# 필요한 데이터 불러오기
+# csv로 불러오면 age_w0 칼럼명이 깨짐.
+data = read.csv('../data_v2/need_network_variables.csv')
+data_excel = read_excel('../data_v2/need_network_variables.xlsx')
+```
+
+
+```{r}
+
+```
+
+
+```{r}
+# 1. psp(4개) + swn(20개) 데이터 불러오기
+# 1.1) 네트워크 그래프 그리기
+# 1.2) 상관계수 (polychoric)
+# 1.3) 상관계수 (partial)
+psp_swn_data= data[,5:28]
+#str(psp_swn_data)
+
+```
+```{r}
+# 1.2) 상관계수 (psych::polychoric)
+psych_poly_pspswn = psych::polychoric(psp_swn_data, smooth=F, correct=0)
+df_psych_poly_pspswn = data.frame(psych_poly_pspswn[1])
+#write.csv(df_psych_poly_pspswn, '../dg_data/psych_poly_pspswn.csv')
+#print('The items do not have an equal number of response alternatives, global set to FALSE.The items do not have an equal number of response alternatives, global set to FALSE.')
+```
+
+
+```{r}
+# 1.2) 상관계수 (qgraph::cor_auto)
+# 결측치는 상관관계를 구하는 두 변수 중에 있을 때만 제거하는 pairwise 사용
+
+# graph:cor_auto: This is mainly a wrapper around Lavaan function lavCor (Rosseel, 2012) to compute a correlation matrix based on pychoric, polyserial and/or Pearson correlations.
+cor_auto_pspswn = qgraph::cor_auto(psp_swn_data, missing = "pairwise", verbose = TRUE)
+df_cor_auto_pspswn = data.frame(cor_auto_pspswn)
+#write.csv(df_cor_auto_pspswn, '../dg_data/cor_auto_pspswn.csv')
+```
+```{r}
+# 두 방법 별 차이 없음.
+diff_cor_auto_psych = df_cor_auto_pspswn - df_psych_poly_pspswn
+```
+
+
+```{r}
+```
+
+
+```{r}
+
+
+```
+
+
+```{r}
+```
+
+
+```{r}
+# 1.1) Lasso -> GGM network
+# gamma = 0 (BIC를 더 정규화시킴)
+BICgraph_pspswn <- qgraph::EBICglasso(cor_auto_pspswn, nrow(cor_auto_pspswn), gamma=0, threshold = TRUE)
+BICgraph_pspswn_false <- qgraph::EBICglasso(cor_auto_pspswn, nrow(cor_auto_pspswn), gamma=0, threshold = FALSE)
+```
+```{r}
+# 0507 피드백으로 수행함.
+x <- data.frame(BICgraph_pspswn[2])
+y <- x[,4:27]
+colnames(y) <- colnames(psp_swn_data)
+#write.csv(y, '../20210507_feed/psp_swn_Graph_lassoall.csv')
+```
+
+
+```{r}
+layout(t(1:2))
+BICgraph_pspswn <- qgraph(BICgraph_pspswn, layout = "spring", title = "BIC_pspswn", details = TRUE)
+```
+
+
+```{r}
+# 1.1) Lasso -> GGM network
+# gamma = 0.5 (일반적으로 좋은 선택)
+EBICgraph_pspswn <- qgraph::EBICglasso(cor_auto_pspswn, nrow(cor_auto_pspswn), gamma= 0.5, threshold = TRUE)
+```
+
+
+```{r}
+xx <- data.frame(EBICgraph_pspswn[2])
+yy <- xx[,4:27]
+colnames(yy) <- colnames(psp_swn_data)
+#write.csv(yy, '../20210507_feed/psp_swn_Graph_lassoall_gamma=5.csv')
+```
+
+
+```{r}
+```
+
+
+```{r}
+layout(t(1:2))
+EBICgraph_pspswn <- qgraph(EBICgraph_pspswn, layout = "spring", title = "EBIC_pspswn", details = TRUE)
+```
+```{r}
+# 결측치 있으면 partial correlation 구해지지 않아서 결측치 있는 행 제거 
+# (라이브러리에도 결측치 제거에 대한 알고리즘이 없음)
+# psp_swn_data: 814개, na_omit_psp_swn_data: 731개
+# spearman한 이유: ordinal type
+# spearman을 쓰긴 했는데, 혹시나 kendall도 쓰이는 상황이 비슷해서 연산해봤으나 큰차이 없음
+# 좀 차이 많이 나는 경우가 0.01 정도.
+na_omit_psp_swn_data <- na.omit(psp_swn_data)
+
+pcor_psp_swn_data <- ppcor::pcor(na_omit_psp_swn_data, method='spearman')
+df_pcor_psp_swn_data <- data.frame(pcor_psp_swn_data)
+colnames(df_pcor_psp_swn_data) = colnames(psp_swn_data)
+#write.csv(df_pcor_psp_swn_data, '../dg_data/df_pcor_spearman_psp_swn.csv')
+
+
+pcor_kendall_psp_swn_data <- ppcor::pcor(na_omit_psp_swn_data, method='kendall')
+df_pcor_kendall_psp_swn_data <- data.frame(pcor_kendall_psp_swn_data)
+colnames(df_pcor_kendall_psp_swn_data) = colnames(psp_swn_data)
+#write.csv(df_pcor_kendall_psp_swn_data, '../dg_data/df_pcor_kendall_psp_swn.csv')
+
+diff_pcor_psp_swn = df_pcor_psp_swn_data - df_pcor_kendall_psp_swn_data
+
+```
+
+
+```{r}
+
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+# 2. SCL (9개) + PANSS (4개) 데이터 불러오기
+small_scl_panss_data= data[,149:161]
+str(small_scl_panss_data)
+test_matrix = data.frame(small_scl_panss_data)
+# 2.1) 네트워크 그래프 그리기
+# 2.2) 상관계수 (polychoric)
+# 2.3) 상관계수 (partial)
+```
+```{r}
+na_row_small_scl_panss <- naniar::miss_case_summary(small_scl_panss_data)
+naniar::vis_miss(small_scl_panss_data)
+```
+
+
+```{r}
+# 814개의 샘플 중에 PANSSS 4종의 결측치가 600개 이상
+naniar::gg_miss_var(small_scl_panss_data)
+```
+
+```{r}
+# 2.2) 상관계수 (psych::polychoric)
+psych_test <- psych::polychoric(na_row_small_scl_panss)
+df_psych_small_scl_panss = data.frame(psych_small_scl_panss_data[1])
+
+```
+```{r}
+# 2.2) 상관계수 (psych::polychoric)
+psych_small_scl_panss_data <- psych::polychoric(small_scl_panss_data, smooth=F, correct=0)
+
+```
+
+
+```{r}
+# 2.2) 상관계수 (qgraph::cor_auto) 
+test_cor_auto_small_scl_panss = qgraph::cor_auto(small_scl_panss_data, missing = "pairwise")
+cor_auto_small_scl_panss = qgraph::cor_auto(small_scl_panss_data, missing = "pairwise", verbose = TRUE)
+# print('Error in lav_samplestats_icov(COV = cov[[g]], ridge = ridge.eps, x.idx = x.idx[[g]], : lavaan ERROR: sample covariance matrix is not positive-definite')
+```
+
+
+```{r}
+# small_scl_panss: 814개 | na_omit_small_scl_panss: 154개
+na_omit_small_scl_panss_data <- na.omit(small_scl_panss_data)
+na_omit_psych_small_scl_panss <- psych::polychoric(na_omit_small_scl_panss_data)
+print('Error in psych::polychoric(na_omit_small_scl_panss_data) : You have more than8 categories for your items, polychoric is probably not needed')
+
+```
+
+
+```{r}
+na_omit_cor_auto_small_scl_panss = qgraph::cor_auto(small_scl_panss_data_allomit, forcePD = TRUE)
+```
+
+
+```{r}
+pcor_na_na_omit_small_scl_panss<- ppcor::pcor(na_omit_small_scl_panss_data, method='spearman')
+df_pcor_na_omit_small_scl_panss <- data.frame(pcor_na_na_omit_small_scl_panss)
+colnames(df_pcor_na_omit_small_scl_panss) = colnames(na_omit_small_scl_panss_data)
+write.csv(df_pcor_na_omit_small_scl_panss, '../dg_data/df_pcor_na_omit_small_scl_panss.csv')
+
+pcor_kendall_small_scl_panss <- ppcor::pcor(na_omit_small_scl_panss_data, method='kendall')
+df_pcor_kendall_small_scl_panss<- data.frame(pcor_kendall_small_scl_panss)
+colnames(df_pcor_kendall_small_scl_panss) = colnames(small_scl_panss_data)
+write.csv(df_pcor_kendall_small_scl_panss, '../dg_data/df_pcor_kendall_small_scl_panss.csv')
+
+diff_pcor_kendall_small_scl_panss = df_pcor_na_omit_small_scl_panss - df_pcor_kendall_small_scl_panss
+```
+
+
+```{r}
+```
+
+
+```{r}
+# 3. SCL (90개) +PANSS(30개) 데이터 불러오기
+big_scl_panss_data= data[,29:148]
+colnames(big_scl_panss_data)
+# 3.1) 네트워크 그래프 그리기
+# 3.2) 상관계수 (polychoric)
+# 3.3) 상관계수 (partial)
+```
+```{r}
+```
+
+
+```{r}
+# 3.2) 상관계수 (psych::polychoric)
+big_scl_panss_colnames <- colnames(big_scl_panss_data)
+psych_poly_big_scl_panss_data <- psych::polychoric(big_scl_panss_data, smooth=F, correct=0)
+df_psych_big_scl_panss_data = data.frame(psych_poly_big_scl_panss_data[1])
+colnames(df_psych_big_scl_panss_data) <- big_scl_panss_colnames
+#write.csv(df_psych_big_scl_panss_data, '../dg_data/df_psych_big_scl_panss.csv')
+```
+
+
+```{r}
+# 3.2) 상관계수 (qgraph:cor_auto)
+cor_auto_big_scl_panss = qgraph::cor_auto(big_scl_panss_data, missing = "pairwise", verbose = TRUE)
+df_cor_auto_big_scl_panss = data.frame(cor_auto_big_scl_panss)
+#write.csv(df_cor_auto_big_scl_panss, '../dg_data/df_cor_auto_big_scl_panss.csv')
+```
+```{r}
+# 두가지 라이브러리 비교 (차이 없음)
+diff_cor_big_scl_panss = df_cor_auto_big_scl_panss - df_psych_big_scl_panss_data
+```
+```{r}
+# EBICglasso의 조건 봐야할 듯 (cell 값에 음수 있으면 안되는 듯)
+
+BICgraph_bigsclpanss <- qgraph::EBICglasso(df_psych_big_scl_panss_data, nrow(df_psych_big_scl_panss_data), gamma=0, threshold = TRUE)
+```
+
+
+```{r}
+BICgraph_bigsclpanss <- qgraph::EBICglasso(df_cor_auto_big_scl_panss, nrow(df_psych_big_scl_panss_data), gamma=0, threshold = TRUE)
+```
+
+
+```{r}
+BICgraph_bigsclpanss <- qgraph::EBICglasso(df_psych_big_scl_panss_data, nrow(df_psych_big_scl_panss_data), gamma=0.5, threshold = TRUE)
+```
+
+
+```{r}
+BICgraph_bigsclpanss <- qgraph::EBICglasso(df_cor_auto_big_scl_panss, nrow(df_psych_big_scl_panss_data), gamma=0.5, threshold = TRUE)
+```
+
+
+```{r}
+
+BICgraph_bigsclpanss <- qgraph::EBICglasso(df_psych_big_scl_panss_data, nrow(df_psych_big_scl_panss_data), gamma=0, threshold = TRUE)
+
+layout(t(1:2))
+BICgraph_pspswn <- qgraph(cor_auto_big_scl_panss, layout = "spring", title = "BIC_pspswn", details = TRUE)
+```
+
+```{r}
+naniar::vis_miss(big_scl_panss_data)
+```
+
+
+```{r}
+naniar::gg_miss_var(big_scl_panss_data)
+```
+
+
+```{r}
+# 결측치 있으면 partial correlation 구해지지 않아서 결측치 있는 행 제거 
+# (라이브러리에도 결측치 제거에 대한 알고리즘이 없음)
+# big_scl_panss_data: 814개, na_omit_psp_swn_data: 154개
+# spearman한 이유: ordinal type
+# spearman을 쓰긴 했는데, 혹시나 kendall도 쓰이는 상황이 비슷해서 연산해봤으나 큰차이 없음
+# 좀 차이 많이 나는 경우가 0.01 정도.
+na_omit_big_scl_panss_data <- na.omit(big_scl_panss_data)
+
+pcor_na_omit_big_scl_panss_data<- ppcor::pcor(na_omit_big_scl_panss_data, method='spearman')
+df_pcor_na_omit_big_scl_panss_data <- data.frame(pcor_na_omit_big_scl_panss_data)
+colnames(df_pcor_na_omit_big_scl_panss_data) = colnames(big_scl_panss_data)
+#write.csv(df_pcor_na_omit_big_scl_panss_data, '../dg_data/df_pcor_na_omit_big_scl_panss_data.csv')
+
+pcor_kendall_big_scl_panss_data <- ppcor::pcor(na_omit_big_scl_panss_data, method='kendall')
+df_pcor_kendall_big_scl_panss_data <- data.frame(pcor_kendall_big_scl_panss_data)
+colnames(df_pcor_kendall_big_scl_panss_data) = colnames(big_scl_panss_data)
+#write.csv(df_pcor_kendall_big_scl_panss_data, '../dg_data/df_pcor_kendall_big_scl_panss_data.csv')
+
+
+diff_pcor_big_scl_panss_data = df_pcor_na_omit_big_scl_panss_data - df_pcor_kendall_big_scl_panss_data
+```
+
+
+```{r}
+# test 결측치 지운 걸로 polychoric -> plot
+test_cor_auto_big_scl_panss = qgraph::cor_auto(na_omit_big_scl_panss_data, missing = "pairwise", verbose = TRUE)
+test_BICgraph_bigsclpanss <- qgraph::EBICglasso(test_cor_auto_big_scl_panss, nrow(test_cor_auto_big_scl_panss), gamma=0, threshold = TRUE, checkPD=FALSE)
+```
+
+```{r}
+test_cor_auto_big_scl_panss = qgraph::cor_auto(na_omit_big_scl_panss_data, missing = "pairwise", verbose = TRUE)
+
+```
+
+
+
+
+```{r}
+test_BICgraph_bigsclpanss <- qgraph::EBICglasso(test_cor_auto_big_scl_panss, nrow(test_cor_auto_big_scl_panss), gamma=0, threshold = TRUE)
+```
+
+
+```{r}
+```
+
+
+```{r}
+
+#Compute correlation matrix after nonparanormal transformation
+corMatall <- huge.npn(allomit, npn.func='skeptic') 
+
+```
+
+
+```{r}
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.

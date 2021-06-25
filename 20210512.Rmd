@@ -1,0 +1,440 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+```{r}
+install.packages("bootnet")
+install.packages("IsingFit")
+install.packages("IsingSampler")
+install.packages("graphicalVAR")
+install.packages("mlVAR")
+install.packages("reshape2")
+install.packages("ggplot2")
+install.packages("lavaan")
+install.packages("lme4")
+install.packages("glmnet")
+install.packages("depmixS4")
+install.packages("huge")
+install.packages("BayesFactor")
+install.packages("ltm")
+install.packages("ega")
+```
+
+```{r}
+library(readxl)
+library("qgraph")
+library("bootnet")
+library("IsingFit")
+library("IsingSampler")
+library("graphicalVAR")
+library("mlVAR")
+library("reshape2")
+library("ggplot2")
+library("lavaan")
+library("lme4")
+library("glmnet")
+library("depmixS4")
+library("huge")
+library("BayesFactor")
+library("ltm")
+library("ega")
+
+```
+
+
+```{r}
+data = read.csv('../data_v2/need_network_variables.csv')
+psp_swn_data= data[,5:28]
+small_scl_panss_data= data[,149:161]
+small_scl_cgi_data = cbind(data[,149:157],data[,162:165])
+```
+
+
+```{r}
+# remove missing data
+psp_swn_allomit <- na.omit(psp_swn_data) 
+```
+
+
+```{r}
+names(psp_swn_allomit)
+```
+
+
+
+
+```{r}
+#Compute correlation matrix after nonparanormal transformation
+psp_swn_corMatall <- huge.npn(psp_swn_allomit, npn.func='skeptic') 
+```
+
+```{r}
+psp_swn_spearman_corMatall <- cor(psp_swn_allomit, method = c("spearman"))
+psp_swn_kendall_corMatall <- cor(psp_swn_allomit, method = c("kendall"))
+psp_swn_huge_spearman = psp_swn_corMatall - psp_swn_spearman_corMatall
+psp_swn_huge_kendall = psp_swn_corMatall - psp_swn_kendall_corMatall
+```
+
+
+```{r}
+mean(psp_swn_huge_spearman)
+```
+```{r}
+mean(psp_swn_huge_kendall)
+```
+
+
+```{r}
+df_psp_swn_corMatall = data.frame(psp_swn_corMatall)
+colnames(df_psp_swn_corMatall) = colnames(psp_swn_corMatall)
+#write.csv(psp_swn_corMatall, '../20210512_feed/psp_swn_corMatall.csv')
+```
+
+```{r}
+print('=================================================================')
+```
+
+```{r}
+# remove missing data
+small_scl_panss_data_allomit <- na.omit(small_scl_panss_data) 
+```
+
+
+```{r}
+names(small_scl_panss_data_allomit)
+```
+
+
+
+
+```{r}
+#Compute correlation matrix after nonparanormal transformation
+small_scl_panss_corMatall <- huge.npn(small_scl_panss_data_allomit, npn.func='skeptic') 
+```
+
+
+
+```{r}
+df_small_scl_panss_corMatall = data.frame(small_scl_panss_corMatall)
+colnames(df_small_scl_panss_corMatall) = colnames(small_scl_panss_corMatall)
+#write.csv(df_small_scl_panss_corMatall, '../20210512_feed/small_scl_panss_corMatall.csv')
+```
+```{r}
+small_scl_panss_spearman_corMatall <- cor(small_scl_panss_data_allomit, method = c("spearman"))
+small_scl_panss_kendall_corMatall <- cor(small_scl_panss_data_allomit, method = c("kendall"))
+small_scl_panss_huge_spearman = small_scl_panss_corMatall - small_scl_panss_spearman_corMatall
+small_scl_panss_huge_kendall = small_scl_panss_corMatall - small_scl_panss_kendall_corMatall
+```
+```{r}
+mean(small_scl_panss_huge_spearman)
+```
+```{r}
+mean(small_scl_panss_huge_kendall)
+```
+
+
+
+```{r}
+print('=================================================================')
+```
+
+```{r}
+# remove missing data
+small_scl_cgi_data_allomit <- na.omit(small_scl_cgi_data) 
+```
+
+
+```{r}
+names(small_scl_cgi_data_allomit)
+```
+
+
+
+
+```{r}
+#Compute correlation matrix after nonparanormal transformation
+small_scl_cgi_data_allomit_corMatall <- huge.npn(small_scl_cgi_data_allomit, npn.func='skeptic') 
+```
+
+
+
+```{r}
+df_small_scl_cgi_data_allomit_corMatall = data.frame(small_scl_cgi_data_allomit_corMatall)
+colnames(df_small_scl_cgi_data_allomit_corMatall) = colnames(small_scl_cgi_data_allomit_corMatall)
+write.csv(df_small_scl_cgi_data_allomit_corMatall, '../20210512_feed/small_scl_cgi_corMatall.csv')
+```
+
+```{r}
+small_scl_cgi_spearman_corMatall <- cor(small_scl_cgi_data_allomit, method = c("spearman"))
+small_scl_cgi_kendall_corMatall <- cor(small_scl_cgi_data_allomit, method = c("kendall"))
+small_scl_cgi_huge_spearman = small_scl_cgi_data_allomit_corMatall - small_scl_cgi_spearman_corMatall
+small_scl_cgi_huge_kendall = small_scl_cgi_data_allomit_corMatall - small_scl_cgi_kendall_corMatall
+```
+
+
+
+```{r}
+mean(small_scl_cgi_huge_spearman)
+```
+
+
+```{r}
+mean(small_scl_cgi_huge_kendall)
+```
+
+
+```{r}
+#Calculate and plot network
+psp_swn_Graph_lassoall <- qgraph::qgraph(psp_swn_corMatall, graph = "glasso", layout = "spring", tuning = 0.5, sampleSize = nrow(psp_swn_allomit), minimum = 0, maximum = 1, details = TRUE, esize = 20, lambda.min.ratio = 0.01,  cut = 0.15, groups =  list("psp" = 1:4, "swn" = 5:24), nodeNames = names(psp_swn_allomit), legend.cex = 0.45, vsize = 8, esize = 25, palette = 'pastel', posCol = "blue", negCol = "red",color = c("red", "yellow", "grey", "blue"), borders = FALSE, vTrans = 200, details = TRUE)
+```
+```{r}
+# psp_swn_Graph_lassoall$Edgelist$from
+# psp_swn_Graph_lassoall$Edgelist$to
+# psp_swn_Graph_lassoall$Edgelist$weight
+```
+
+```{r}
+# Compute and plot centrality index
+psp_swn_centResall <- centrality(psp_swn_Graph_lassoall)
+psp_swn_centResall$OutDegree
+psp_swn_centResall$Closeness
+psp_swn_centResall$Betweenness
+psp_swn_centralityPlot <- qgraph::centralityPlot(psp_swn_Graph_lassoall, orderBy = "Strength")
+```
+
+```{r}
+centralityPlot(psp_swn_Graph_lassoall)
+
+```
+
+```{r}
+#Edges 95% confidence intervals
+psp_swn_resultsall <- bootnet::estimateNetwork(psp_swn_allomit, default = "EBICglasso", corMethod = "cor_auto", tuning = 0.5)
+psp_swn_boot1all <- bootnet::bootnet(psp_swn_resultsall, nBoots = 2500,nCores = 8, type = "nonparametric")
+plot(psp_swn_boot1all, labels = FALSE, order = "sample")
+
+```
+
+
+```{r}
+print(psp_swn_boot1all)
+```
+
+```{r}
+plot(psp_swn_)
+```
+
+```{r}
+summary(psp_swn_boot1all)
+```
+
+
+```{r}
+# Network stability
+psp_swn_networkall <- bootnet::estimateNetwork(psp_swn_allomit, default = "EBICglasso", corMethod = "cor_auto", tuning = 0.5, refit = TRUE)
+psp_swn_boot2all <- bootnet(psp_swn_networkall, nBoots = 2500,type = "case", nCores = 8)
+plot(psp_swn_boot2all)
+
+
+```
+
+```{r}
+print(psp_swn_boot2all)
+
+```
+
+
+```{r}
+summary(psp_swn_boot2all)
+```
+
+
+```{r}
+```
+
+```{r}
+# CS central stabilit coefficient (should be above 0.25, and is good if >0.5)
+psp_swn_corStability <-corStability(psp_swn_boot2all)
+```
+```{r}
+```
+
+
+```{r}
+# =======================  small_swcl_panss 시작이다 =====================================
+#Calculate and plot network
+small_scl_panss_Graph_lassoall <- qgraph::qgraph(small_scl_panss_corMatall, graph = "glasso", layout = "spring", tuning = 0.5, sampleSize = nrow(small_scl_panss_data_allomit), minimum = 0, maximum = 1, details = TRUE, esize = 20, lambda.min.ratio = 0.01,  cut = 0.15, groups =  list("scl" = 1:9, "scl" = 10:13), nodeNames = names(small_scl_panss_data_allomit), legend.cex = 0.45, vsize = 8, esize = 25, palette = 'pastel', posCol = "blue", negCol = "red",color = c("red", "yellow", "grey", "blue"), borders = FALSE, vTrans = 200, details = TRUE)
+```
+```{r}
+# small_scl_panss_Graph_lassoall$Edgelist$from
+# small_scl_panss_Graph_lassoall$Edgelist$to
+# small_scl_panss_Graph_lassoall$Edgelist$weight
+```
+
+```{r}
+# Compute and plot centrality index
+small_scl_panss_centResall <- centrality(small_scl_panss_Graph_lassoall)
+small_scl_panss_centResall$OutDegree
+small_scl_panss_centResall$Closeness
+small_scl_panss_centResall$Betweenness
+small_scl_panss_centralityPlot <- qgraph::centralityPlot(small_scl_panss_Graph_lassoall, orderBy = "Strength")
+```
+
+
+```{r}
+#Edges 95% confidence intervals
+small_scl_panss_resultsall <- bootnet::estimateNetwork(small_scl_panss_data_allomit, default = "EBICglasso", corMethod = "cor_auto", tuning = 0.5)
+small_scl_panss_boot1all <- bootnet::bootnet(small_scl_panss_resultsall, nBoots = 2500,nCores = 8, type = "nonparametric")
+plot(small_scl_panss_boot1all, labels = FALSE, order = "sample")
+
+```
+
+
+```{r}
+# Network stability
+psp_swn_networkall <- bootnet::estimateNetwork(psp_swn_allomit, default = "EBICglasso", corMethod = "cor_auto", tuning = 0.5, refit = TRUE)
+psp_swn_boot2all <- bootnet(psp_swn_networkall, nBoots = 2500,type = "case", nCores = 8)
+plot(psp_swn_boot2all)
+```
+
+
+
+```{r}
+print('======================small_scl_cgi 시작입니다===========================')
+```
+
+
+```{r}
+#Calculate and plot network
+small_scl_cgi_Graph_lassoall = qgraph::qgraph(small_scl_cgi_data_allomit_corMatall, graph = "glasso", layout = "spring", tuning = 0.5, sampleSize = nrow(small_scl_cgi_data_allomit), minimum = 0, maximum = 1, details = TRUE, esize = 20, lambda.min.ratio = 0.01,  cut = 0.15, groups =  list("scl" = 1:9, "cgi" = 10:13), nodeNames = names(small_scl_cgi_data_allomit), legend.cex = 0.45, vsize = 8, esize = 25, palette = 'pastel', posCol = "blue", negCol = "red",color = c("red", "yellow", "grey", "blue"), borders = FALSE, vTrans = 200, details = TRUE)
+```
+
+
+```{r}
+
+
+```
+
+
+
+```{r}
+# Compute and plot centrality index
+small_scl_cgi_centResall <- centrality(small_scl_cgi_Graph_lassoall)
+small_scl_cgi_centResall$OutDegree
+small_scl_cgi_centResall$Closeness
+small_scl_cgi_centResall$Betweenness
+small_scl_cgi_centralityPlot <- centralityPlot(small_scl_cgi_Graph_lassoall, orderBy = 'Strength')
+```
+
+
+```{r}
+#Edges 95% confidence intervals
+small_scl_cgi_resultsall <- estimateNetwork(small_scl_cgi_data_allomit, default = "EBICglasso", corMethod = "cor_auto", tuning = 0.5)
+small_scl_cgi_boot1all <- bootnet(small_scl_cgi_resultsall, nBoots = 2500,nCores = 8, type = "nonparametric")
+plot(small_scl_cgi_boot1all, labels = FALSE, order = "sample")
+
+```
+```{r}
+print(small_scl_cgi_boot1all)
+
+```
+
+
+```{r}
+summary(small_scl_cgi_boot1all)
+```
+
+
+```{r}
+# Network stability
+small_scl_cgi_networkall <- estimateNetwork(small_scl_cgi_data_allomit, default = "EBICglasso", corMethod = "cor_auto", tuning = 0.5, refit = TRUE)
+small_scl_cgi_boot2all <- bootnet(small_scl_cgi_networkall, nBoots = 2500,type = "case", nCores = 8)
+plot(small_scl_cgi_boot2all)
+
+
+```
+
+```{r}
+print(small_scl_cgi_boot2all)
+
+```
+
+
+```{r}
+summary(small_scl_cgi_boot2all)
+```
+
+```{r}
+# CS central stabilit coefficient (should be above 0.25, and is good if >0.5)
+small_scl_cgi_corStability<- corStability(small_scl_cgi_boot2all)
+```
+
+
+```{r}
+test2_BICgraph_pspswn <- qgraph::EBICglasso(corMatall, nrow(corMatall), gamma=0, threshold = TRUE)
+BICgraph_pspswn_false <- qgraph::EBICglasso(test2_BICgraph_pspswn, nrow(test2_BICgraph_pspswn), gamma=0, threshold = FALSE)
+
+```
+
+
+```{r}
+
+
+```
+
+
+```{r}
+
+```
+```{r}
+
+```
+
+
+```{r}
+
+
+```
+
+
+```{r}
+
+
+```
+```{r}
+
+
+```
+
+
+```{r}
+
+```
+
+
+```{r}
+
+
+```
+```{r}
+
+
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.

@@ -1,0 +1,420 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+```{r}
+```
+
+
+```{r}
+library(readxl)
+library("qgraph")
+library("bootnet")
+library("IsingFit")
+library("IsingSampler")
+library("graphicalVAR")
+library("mlVAR")
+library("reshape2")
+library("ggplot2")
+library("lavaan")
+library("lme4")
+library("glmnet")
+library("depmixS4")
+library("huge")
+library("BayesFactor")
+library("ltm")
+library("ega")
+library(igraph)
+```
+
+```{r}
+hist(psp_swn_allomit)
+```
+
+
+```{r}
+hist(small_scl_panss_data_allomit)
+```
+
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+hist(small_scl_cgi_data_allomit)
+```
+
+
+```{r}
+hist(small_scl_cgi_data_allomit[10:13])
+```
+
+```{r}
+install.packages("mvnormtest")
+library(mvnormtest)
+install.packages("MVN")
+library(MVN)
+```
+
+
+```{r}
+# 역행렬이 계산되지 않아 오류 발생.
+mshapiro.test(data.matrix(small_scl_cgi_data_allomit[1:9]))
+```
+```{r}
+scl_panss_mardia <- mvn(data = small_scl_panss_data_allomit, mvnTest = "mardia")
+scl_panss_hz <- mvn(data = small_scl_panss_data_allomit, mvnTest = "hz")
+scl_panss_royston <- mvn(data = small_scl_panss_data_allomit, mvnTest = "royston")
+scl_panss_dh <- mvn(data = small_scl_panss_data_allomit, mvnTest = "dh")
+scl_panss_energy <- mvn(data = small_scl_panss_data_allomit, mvnTest = "energy")
+```
+
+
+```{r}
+View(scl_panss_mardia$multivariateNormality)
+View(scl_panss_hz$multivariateNormality)
+View(scl_panss_royston$multivariateNormality)
+View(scl_panss_dh$multivariateNormality)
+View(scl_panss_energy$multivariateNormality)
+```
+
+
+```{r}
+
+```
+
+
+```{r}
+```
+
+
+```{r}
+scl_cgi_mardia <- mvn(data = small_scl_cgi_data_allomit[1:9], mvnTest = "mardia"),
+scl_cgi_hz <- mvn(data = small_scl_cgi_data_allomit[1:9], mvnTest = "hz"),
+scl_cgi_royston <- mvn(data = small_scl_cgi_data_allomit[1:9], mvnTest = "royston"),
+scl_cgi_dh <- mvn(data = small_scl_cgi_data_allomit[1:9], mvnTest = "dh"),
+scl_cgi_energy <- mvn(data = small_scl_cgi_data_allomit[1:9], mvnTest = "energy"),
+```
+```{r}
+print.listof(scl_cgi_mardia$multivariateNormality)
+```
+
+
+```{r}
+print.listof(scl_cgi_hz$multivariateNormality)
+```
+
+```{r}
+print.listof(scl_cgi_royston$multivariateNormality)
+```
+
+
+```{r}
+print.listof(scl_cgi_dh$multivariateNormality)
+```
+```{r}
+print.listof(scl_cgi_energy$multivariateNormality)
+```
+
+
+```{r}
+View(scl_cgi_mardia$multivariateNormality)
+View(scl_cgi_hz$multivariateNormality)
+View(scl_cgi_royston$multivariateNormality)
+View(scl_cgi_dh$multivariateNormality)
+View(scl_cgi_energy$multivariateNormality)
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+result2 <- mvn(small_scl_cgi_data_allomit[1:9], mvnTest = "royston", multivariatePlot = "qq")
+```
+```{r}
+# ==================== qgraph ==================
+# ==================== psp_swn =================
+```
+```{r}
+#Calculate and plot network
+psp_swn_Graph_lassoall <- qgraph::qgraph(psp_swn_corMatall, graph = "glasso", layout = "spring", tuning = 0.5, sampleSize = nrow(psp_swn_allomit), minimum = 0, maximum = 1, details = TRUE, esize = 20, lambda.min.ratio = 0.01,  cut = 0.15, groups =  list("psp" = 1:4, "swn" = 5:24), nodeNames = names(psp_swn_allomit), legend.cex = 0.45, vsize = 8, esize = 25, palette = 'pastel', posCol = "blue", negCol = "red",color = c("red", "yellow", "grey", "blue"), borders = FALSE, vTrans = 200, details = TRUE)
+```
+
+
+```{r}
+#Calculate and plot network
+psp_swn_spearman_Graph_lassoall <- qgraph::qgraph(psp_swn_spearman_corMatall, graph = "glasso", layout = "spring", tuning = 0.5, sampleSize = nrow(psp_swn_allomit), minimum = 0, maximum = 1, details = TRUE, esize = 20, lambda.min.ratio = 0.01,  cut = 0.15, groups =  list("psp" = 1:4, "swn" = 5:24), nodeNames = names(psp_swn_allomit), legend.cex = 0.45, vsize = 8, esize = 25, palette = 'pastel', posCol = "blue", negCol = "red",color = c("red", "yellow", "grey", "blue"), borders = FALSE, vTrans = 200, details = TRUE)
+```
+
+
+```{r}
+psp_swn_kendall_Graph_lassoall <- qgraph::qgraph(psp_swn_kendall_corMatall, graph = "glasso", layout = "spring", tuning = 0.5, sampleSize = nrow(psp_swn_allomit), minimum = 0, maximum = 1, details = TRUE, esize = 20, lambda.min.ratio = 0.01,  cut = 0.15, groups =  list("psp" = 1:4, "swn" = 5:24), nodeNames = names(psp_swn_allomit), legend.cex = 0.45, vsize = 8, esize = 25, palette = 'pastel', posCol = "blue", negCol = "red",color = c("red", "yellow", "grey", "blue"), borders = FALSE, vTrans = 200, details = TRUE)
+```
+
+
+```{r}
+# ==================== qgraph ==================
+# ==================== small_scl_panss =================
+```
+
+
+```{r}
+#Calculate and plot network
+small_scl_panss_Graph_lassoall <- qgraph::qgraph(small_scl_panss_corMatall, graph = "glasso", layout = "spring", tuning = 0.5, sampleSize = nrow(small_scl_panss_data_allomit), minimum = 0, maximum = 1, details = TRUE, esize = 20, lambda.min.ratio = 0.01,  cut = 0.15, groups =  list("scl" = 1:9, "scl" = 10:13), nodeNames = names(small_scl_panss_data_allomit), legend.cex = 0.45, vsize = 8, esize = 25, palette = 'pastel', posCol = "blue", negCol = "red",color = c("red", "yellow", "grey", "blue"), borders = FALSE, vTrans = 200, details = TRUE)
+```
+
+
+```{r}
+small_scl_panss_spearman_Graph_lassoall <- qgraph::qgraph(small_scl_panss_spearman_corMatall, graph = "glasso", layout = "spring", tuning = 0.5, sampleSize = nrow(small_scl_panss_data_allomit), minimum = 0, maximum = 1, details = TRUE, esize = 20, lambda.min.ratio = 0.01,  cut = 0.15, groups =  list("scl" = 1:9, "scl" = 10:13), nodeNames = names(small_scl_panss_data_allomit), legend.cex = 0.45, vsize = 8, esize = 25, palette = 'pastel', posCol = "blue", negCol = "red",color = c("red", "yellow", "grey", "blue"), borders = FALSE, vTrans = 200, details = TRUE)
+```
+```{r}
+small_scl_panss_kendall_Graph_lassoall <- qgraph::qgraph(small_scl_panss_kendall_corMatall, graph = "glasso", layout = "spring", tuning = 0.5, sampleSize = nrow(small_scl_panss_data_allomit), minimum = 0, maximum = 1, details = TRUE, esize = 20, lambda.min.ratio = 0.01,  cut = 0.15, groups =  list("scl" = 1:9, "scl" = 10:13), nodeNames = names(small_scl_panss_data_allomit), legend.cex = 0.45, vsize = 8, esize = 25, palette = 'pastel', posCol = "blue", negCol = "red",color = c("red", "yellow", "grey", "blue"), borders = FALSE, vTrans = 200, details = TRUE)
+```
+
+
+```{r}
+# =================== qgraph =========================
+# =================== small_scl_cgi ==================
+```
+
+
+```{r}
+small_scl_cgi_Graph_lassoall = qgraph::qgraph(small_scl_cgi_data_allomit_corMatall, graph = "glasso", layout = "spring", tuning = 0.5, sampleSize = nrow(small_scl_cgi_data_allomit), minimum = 0, maximum = 1, details = TRUE, esize = 20, lambda.min.ratio = 0.01,  cut = 0.15, groups =  list("scl" = 1:9, "cgi" = 10:13), nodeNames = names(small_scl_cgi_data_allomit), legend.cex = 0.45, vsize = 8, esize = 25, palette = 'pastel', posCol = "blue", negCol = "red",color = c("red", "yellow", "grey", "blue"), borders = FALSE, vTrans = 200, details = TRUE)
+```
+
+
+```{r}
+small_scl_cgi_spearman_Graph_lassoall = qgraph::qgraph(small_scl_cgi_spearman_corMatall, graph = "glasso", layout = "spring", tuning = 0.5, sampleSize = nrow(small_scl_cgi_data_allomit), minimum = 0, maximum = 1, details = TRUE, esize = 20, lambda.min.ratio = 0.01,  cut = 0.15, groups =  list("scl" = 1:9, "cgi" = 10:13), nodeNames = names(small_scl_cgi_data_allomit), legend.cex = 0.45, vsize = 8, esize = 25, palette = 'pastel', posCol = "blue", negCol = "red",color = c("red", "yellow", "grey", "blue"), borders = FALSE, vTrans = 200, details = TRUE)
+```
+
+```{r}
+small_scl_cgi_kendall_Graph_lassoall = qgraph::qgraph(small_scl_cgi_kendall_corMatall, graph = "glasso", layout = "spring", tuning = 0.5, sampleSize = nrow(small_scl_cgi_data_allomit), minimum = 0, maximum = 1, details = TRUE, esize = 20, lambda.min.ratio = 0.01,  cut = 0.15, groups =  list("scl" = 1:9, "cgi" = 10:13), nodeNames = names(small_scl_cgi_data_allomit), legend.cex = 0.45, vsize = 8, esize = 25, palette = 'pastel', posCol = "blue", negCol = "red",color = c("red", "yellow", "grey", "blue"), borders = FALSE, vTrans = 200, details = TRUE)
+```
+```{r}
+psp_swn_Graph_lassoall[1]
+
+```
+
+```{r}
+################### psp_swn weight ###########################
+################################################################
+library(igraph)
+```
+
+```{r}
+psp_swn_weight <- graph.data.frame(psp_swn_Graph_lassoall[1]$Edgelist, directed=FALSE)
+psp_swn_weight_gg <- get.adjacency(psp_swn_weight, type="both", attr="weight")
+psp_swn_weight_ggg <- as.matrix(psp_swn_weight_gg)
+psp_swn_weight_ggg <- psp_swn_weight_ggg[,order(as.integer(colnames(psp_swn_weight_ggg)))]
+psp_swn_weight_ggg <- psp_swn_weight_ggg[order(as.integer(rownames(psp_swn_weight_ggg))),]
+write.csv(psp_swn_weight_ggg, file="../20210524_weight_matrix/psp_swn_weight_ggg.csv", row.names = TRUE, col.names = TRUE)
+```
+
+
+```{r}
+
+psp_swn_spearman_weight <- graph.data.frame(psp_swn_spearman_Graph_lassoall[1]$Edgelist, directed=FALSE)
+psp_swn_spearman_weight_gg <- get.adjacency(psp_swn_spearman_weight, type="both", attr="weight")
+psp_swn_spearman_weight_ggg <- as.matrix(psp_swn_spearman_weight_gg)
+
+psp_swn_spearman_weight_ggg <- psp_swn_spearman_weight_ggg[,order(as.integer(colnames(psp_swn_spearman_weight_ggg)))]
+
+psp_swn_spearman_weight_ggg <- psp_swn_spearman_weight_ggg[order(as.integer(rownames(psp_swn_spearman_weight_ggg))),]
+write.csv(psp_swn_spearman_weight_ggg, file="../20210524_weight_matrix/psp_swn_spearman_weight_ggg.csv", row.names = TRUE, col.names = TRUE)
+```
+
+
+```{r}
+psp_swn_kendall_weight <- graph.data.frame(psp_swn_kendall_Graph_lassoall[1]$Edgelist, directed=FALSE)
+psp_swn_kendall_weight_gg <- get.adjacency(psp_swn_kendall_weight, type="both", attr="weight")
+psp_swn_kendall_weight_ggg <- as.matrix(psp_swn_kendall_weight_gg)
+
+psp_swn_kendall_weight_ggg <- psp_swn_kendall_weight_ggg[,order(as.integer(colnames(psp_swn_kendall_weight_ggg)))]
+
+psp_swn_kendall_weight_ggg <- psp_swn_kendall_weight_ggg[order(as.integer(rownames(psp_swn_kendall_weight_ggg))),]
+write.csv(psp_swn_kendall_weight_ggg, file="../20210524_weight_matrix/psp_swn_kendall_weight_ggg.csv", row.names = TRUE, col.names = TRUE)
+
+```
+
+
+```{r}
+################### small_scl_panss weight ###########################
+################################################################
+```
+```{r}
+small_scl_panss_weight <- graph.data.frame(small_scl_panss_Graph_lassoall[1]$Edgelist, directed=FALSE)
+small_scl_panss_weight_gg <- get.adjacency(small_scl_panss_weight, type="both", attr="weight")
+small_scl_panss_weight_ggg <- as.matrix(small_scl_panss_weight_gg)
+
+small_scl_panss_weight_ggg <- small_scl_panss_weight_ggg[,order(as.integer(colnames(small_scl_panss_weight_ggg)))]
+
+small_scl_panss_weight_ggg <- small_scl_panss_weight_ggg[order(as.integer(rownames(small_scl_panss_weight_ggg))),]
+
+write.csv(small_scl_panss_weight_ggg, file="../20210524_weight_matrix/small_scl_panss_weight_ggg.csv", row.names = TRUE, col.names = TRUE)
+```
+
+
+```{r}
+small_scl_panss_spearman_weight <- graph.data.frame(small_scl_panss_spearman_Graph_lassoall[1]$Edgelist, directed=FALSE)
+
+small_scl_panss_spearman_weight_gg <- get.adjacency(small_scl_panss_spearman_weight, type="both", attr="weight")
+
+small_scl_panss_spearman_weight_ggg <- as.matrix(small_scl_panss_spearman_weight_gg)
+
+small_scl_panss_spearman_weight_ggg <- small_scl_panss_spearman_weight_ggg[,order(as.integer(colnames(small_scl_panss_spearman_weight_ggg)))]
+
+small_scl_panss_spearman_weight_ggg <- small_scl_panss_spearman_weight_ggg[order(as.integer(rownames(small_scl_panss_spearman_weight_ggg))),]
+
+write.csv(small_scl_panss_spearman_weight_ggg, file="../20210524_weight_matrix/small_scl_panss_spearman_weight_ggg.csv", row.names = TRUE, col.names = TRUE)
+```
+
+
+```{r}
+small_scl_panss_kendall_weight <- graph.data.frame(small_scl_panss_kendall_Graph_lassoall[1]$Edgelist, directed=FALSE)
+
+small_scl_panss_kendall_weight_gg <- get.adjacency(small_scl_panss_kendall_weight, type="both", attr="weight")
+
+small_scl_panss_kendall_weight_ggg <- as.matrix(small_scl_panss_kendall_weight_gg)
+
+small_scl_panss_kendall_weight_ggg <- small_scl_panss_kendall_weight_ggg[,order(as.integer(colnames(small_scl_panss_kendall_weight_ggg)))]
+
+small_scl_panss_kendall_weight_ggg <- small_scl_panss_kendall_weight_ggg[order(as.integer(rownames(small_scl_panss_kendall_weight_ggg))),]
+
+write.csv(small_scl_panss_kendall_weight_ggg, file="../20210524_weight_matrix/small_scl_panss_kendall_weight_ggg.csv", row.names = TRUE, col.names = TRUE)
+```
+
+
+```{r}
+```
+
+```{r}
+################### small_scl_cgi weight ###########################
+################################################################
+```
+```{r}
+small_scl_cgi_weight <- graph.data.frame(small_scl_cgi_Graph_lassoall[1]$Edgelist, directed=FALSE)
+small_scl_cgi_weight_gg <- get.adjacency(small_scl_cgi_weight, type="both", attr="weight")
+small_scl_cgi_weight_ggg <- as.matrix(small_scl_cgi_weight_gg)
+
+small_scl_cgi_weight_ggg <- small_scl_cgi_weight_ggg[,order(as.integer(colnames(small_scl_cgi_weight_ggg)))]
+
+small_scl_cgi_weight_ggg <- small_scl_cgi_weight_ggg[order(as.integer(rownames(small_scl_cgi_weight_ggg))),]
+
+write.csv(small_scl_cgi_weight_ggg, file="../20210524_weight_matrix/small_scl_cgi_weight_ggg.csv", row.names = TRUE, col.names = TRUE)
+```
+
+
+```{r}
+small_scl_cgi_spearman_weight <- graph.data.frame(small_scl_cgi_spearman_Graph_lassoall[1]$Edgelist, directed=FALSE)
+
+small_scl_cgi_spearman_weight_gg <- get.adjacency(small_scl_cgi_spearman_weight, type="both", attr="weight")
+small_scl_cgi_spearman_weight_ggg <- as.matrix(small_scl_cgi_spearman_weight_gg)
+
+small_scl_cgi_spearman_weight_ggg <- small_scl_cgi_spearman_weight_ggg[,order(as.integer(colnames(small_scl_cgi_spearman_weight_ggg)))]
+
+small_scl_cgi_spearman_weight_ggg <- small_scl_cgi_spearman_weight_ggg[order(as.integer(rownames(small_scl_cgi_spearman_weight_ggg))),]
+
+write.csv(small_scl_cgi_spearman_weight_ggg, file="../20210524_weight_matrix/small_scl_cgi_spearman_weight_ggg.csv", row.names = TRUE, col.names = TRUE)
+```
+
+
+```{r}
+small_scl_cgi_kendall_weight <- graph.data.frame(small_scl_cgi_kendall_Graph_lassoall[1]$Edgelist, directed=FALSE)
+
+small_scl_cgi_kendall_weight_gg <- get.adjacency(small_scl_cgi_kendall_weight, type="both", attr="weight")
+small_scl_cgi_kendall_weight_ggg <- as.matrix(small_scl_cgi_kendall_weight_gg)
+
+small_scl_cgi_kendall_weight_ggg <- small_scl_cgi_kendall_weight_ggg[,order(as.integer(colnames(small_scl_cgi_kendall_weight_ggg)))]
+
+small_scl_cgi_kendall_weight_ggg <- small_scl_cgi_kendall_weight_ggg[order(as.integer(rownames(small_scl_cgi_kendall_weight_ggg))),]
+
+write.csv(small_scl_cgi_kendall_weight_ggg, file="../20210524_weight_matrix/small_scl_cgi_kendall_weight_ggg.csv", row.names = TRUE, col.names = TRUE)
+```
+```{r}
+```
+
+
+```{r}
+colnames(psp_swn_corMatall)
+```
+
+
+```{r}
+rownames(psp_swn_corMatall)
+```
+```{r}
+colnames(small_scl_panss_corMatall)
+```
+
+
+```{r}
+rownames(small_scl_panss_corMatall)
+```
+
+
+```{r}
+colnames(small_scl_cgi_weight_ggg) = colnames(small_scl_cgi_data_allomit_corMatall)
+rownames(small_scl_cgi_weight_ggg) = rownames(small_scl_cgi_data_allomit_corMatall)
+write.csv(small_scl_cgi_weight_ggg, file="../20210524_weight_matrix/small_scl_cgi_weight_ggg_v2.csv", row.names = TRUE, col.names = TRUE)
+```
+```{r}
+```
+
+
+```{r}
+colnames(psp_swn_weight_ggg) = colnames(psp_swn_corMatall)
+rownames(psp_swn_weight_ggg) = rownames(psp_swn_corMatall)
+write.csv(psp_swn_weight_ggg, file="../20210524_weight_matrix/psp_swn_weight_ggg_v2.csv", row.names = TRUE, col.names = TRUE)
+```
+```{r}
+colnames(small_scl_panss_corMatall)
+```
+
+
+```{r}
+colnames(small_scl_cgi_data_allomit_corMatall)
+```
+
+```{r}
+colnames(small_scl_panss_corMatall)
+```
+```{r}
+rownames(small_scl_panss_corMatall)
+
+```
+
+```{r}
+colnames(small_scl_panss_weight_ggg) = colnames(small_scl_panss_corMatall)
+rownames(small_scl_panss_weight_ggg) = rownames(small_scl_panss_corMatall)
+write.csv(small_scl_panss_weight_ggg, file="../20210524_weight_matrix/small_scl_panss_weight_ggg_v2.csv", row.names = TRUE, col.names = TRUE)
+```
+
+
+```{r}
+colnames(psp_swn_weight_ggg) = colnames(psp_swn_corMatall)
+rownames(psp_swn_weight_ggg) = rownames(psp_swn_corMatall)
+write.csv(psp_swn_weight_ggg, file="../20210524_weight_matrix/psp_swn_weight_ggg_v2.csv", row.names = TRUE, col.names = TRUE)
+```
+
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.

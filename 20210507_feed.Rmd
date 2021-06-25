@@ -1,0 +1,147 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+```{r}
+install.packages("bootnet")
+install.packages("IsingFit")
+install.packages("IsingSampler")
+install.packages("graphicalVAR")
+install.packages("mlVAR")
+install.packages("reshape2")
+install.packages("ggplot2")
+install.packages("lavaan")
+install.packages("lme4")
+install.packages("glmnet")
+install.packages("depmixS4")
+install.packages("huge")
+install.packages("BayesFactor")
+install.packages("ltm")
+install.packages("ega")
+```
+
+```{r}
+library(readxl)
+library("qgraph")
+library("bootnet")
+library("IsingFit")
+library("IsingSampler")
+library("graphicalVAR")
+library("mlVAR")
+library("reshape2")
+library("ggplot2")
+library("lavaan")
+library("lme4")
+library("glmnet")
+library("depmixS4")
+library("huge")
+library("BayesFactor")
+library("ltm")
+library("ega")
+
+```
+
+
+```{r}
+data = read.csv('../data_v2/need_network_variables.csv')
+psp_swn_data= data[,5:28]
+```
+
+
+```{r}
+# remove missing data
+allomit <- na.omit(psp_swn_data) 
+names(allomit)
+```
+
+
+```{r}
+#View file without missing data
+View(allomit)
+```
+
+
+```{r}
+#Compute correlation matrix after nonparanormal transformation
+corMatall <- huge.npn(allomit, npn.func='skeptic') 
+
+```
+
+
+```{r}
+#View correlation matrix
+View(round(corMatall, 9)) 
+```
+```{r}
+df_corMatall = data.frame(corMatall)
+colnames(df_corMatall) = colnames(corMatall)
+write.csv(df_corMatall, '../20210507_feed/df_corMatall.csv')
+```
+
+
+```{r}
+#Calculate and plot network
+Graph_lassoall <- qgraph(corMatall, graph = "glasso", layout = "spring", tuning = 0.5, sampleSize = nrow(allomit), minimum = 0, maximum = 1, details = TRUE, esize = 20, lambda.min.ratio = 0.01,  cut = 0.15, groups =  list("psp" = 1:4, "swn" = 5:24), nodeNames = names(allomit), legend.cex = 0.45, vsize = 8, esize = 25, palette = 'pastel', posCol = "blue", negCol = "red",color = c("red", "yellow", "grey", "blue"), borders = FALSE, vTrans = 200, details = TRUE)
+
+```
+
+
+```{r}
+# Compute and plot centrality index
+centResall <- centrality(Graph_lassoall)
+centResall$OutDegree
+centResall$Closeness
+centResall$Betweenness
+centralityPlot(Graph_lassoall)
+
+```
+```{r}
+#Edges 95% confidence intervals
+resultsall <- estimateNetwork(allomit, default = "EBICglasso", corMethod = "cor_auto", tuning = 0.5)
+boot1all <- bootnet(resultsall, nBoots = 2500,nCores = 8, type = "nonparametric")
+plot(boot1all, labels = FALSE, order = "sample")
+print(boot1all)
+summary(boot1all)
+
+```
+
+
+```{r}
+# Network stability
+networkall <- estimateNetwork(allomit, default = "EBICglasso", corMethod = "cor_auto", tuning = 0.5, refit = TRUE)
+boot2all <- bootnet(networkall, nBoots = 2500,type = "case", nCores = 8)
+plot(boot2all)
+print(boot2all)
+summary(boot2all)
+
+```
+
+
+```{r}
+# CS central stabilit coefficient (should be above 0.25, and is good if >0.5)
+corStability(boot2all)
+
+```
+```{r}
+
+test2_BICgraph_pspswn <- qgraph::EBICglasso(corMatall, nrow(corMatall), gamma=0, threshold = TRUE)
+BICgraph_pspswn_false <- qgraph::EBICglasso(test2_BICgraph_pspswn, nrow(test2_BICgraph_pspswn), gamma=0, threshold = FALSE)
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.

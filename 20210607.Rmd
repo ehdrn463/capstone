@@ -1,0 +1,103 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(readxl)
+library("qgraph")
+library("bootnet")
+library("IsingFit")
+library("IsingSampler")
+library("graphicalVAR")
+library("mlVAR")
+library("reshape2")
+library("ggplot2")
+library("lavaan")
+library("lme4")
+library("glmnet")
+library("depmixS4")
+library("huge")
+library("BayesFactor")
+library("ltm")
+library("ega")
+library(igraph)
+library(ppcor)
+library(corpcor)
+```
+
+
+
+```{r}
+psp_swn_partial_spearman_corMatall = pcor(psp_swn_allomit, method = c("spearman"))
+psp_swn_partial_kendall_corMatall = pcor(psp_swn_allomit, method = c("kendall"))
+
+df_psp_swn_partial_spearman_corMatall = data.frame(psp_swn_partial_spearman_corMatall)[1:24,1:24]
+colnames(df_psp_swn_partial_spearman_corMatall) = colnames(psp_swn_allomit)
+
+df_psp_swn_partial_kendall_corMatall = data.frame(psp_swn_partial_kendall_corMatall)[1:24,1:24]
+colnames(df_psp_swn_partial_kendall_corMatall) = colnames(psp_swn_allomit)
+
+```
+
+```{r}
+small_scl_panss_partial_pearson_corMatall <- pcor(small_scl_panss_data_allomit, method = c("pearson"))
+small_scl_panss_partial_spearman_corMatall <- pcor(small_scl_panss_data_allomit, method = c("spearman"))
+small_scl_panss_partial_kendall_corMatall <- pcor(small_scl_panss_data_allomit, method = c("kendall"))
+
+df_small_scl_panss_partial_pearson_corMatall = data.frame(small_scl_panss_partial_pearson_corMatall)[1:13,1:13]
+colnames(df_small_scl_panss_partial_pearson_corMatall) = colnames(small_scl_panss_data_allomit)
+rownames(df_small_scl_panss_partial_pearson_corMatall) = colnames(small_scl_panss_data_allomit)
+
+df_small_scl_panss_partial_spearman_corMatall = data.frame(small_scl_panss_partial_spearman_corMatall)[1:13,1:13]
+colnames(df_small_scl_panss_partial_spearman_corMatall) = colnames(small_scl_panss_data_allomit)
+
+df_small_scl_panss_partial_kendall_corMatall = data.frame(small_scl_panss_partial_kendall_corMatall)[1:13,1:13]
+colnames(df_small_scl_panss_partial_kendall_corMatall) = colnames(small_scl_panss_data_allomit)
+```
+
+
+```{r}
+small_scl_cgi_partial_spearman_corMatall <- pcor(small_scl_cgi_data_allomit, method = c("spearman"))
+small_scl_cgi_partial_kendall_corMatall <- pcor(small_scl_cgi_data_allomit, method = c("kendall"))
+
+df_small_scl_cgi_partial_spearman_corMatall = data.frame(small_scl_cgi_partial_spearman_corMatall)[1:13,1:13]
+colnames(df_small_scl_cgi_partial_spearman_corMatall) = colnames(small_scl_cgi_data_allomit)
+
+df_small_scl_cgi_partial_kendall_corMatall = data.frame(small_scl_cgi_partial_kendall_corMatall)[1:13,1:13]
+colnames(df_small_scl_cgi_partial_kendall_corMatall) = colnames(small_scl_cgi_data_allomit)
+
+```
+
+
+```{r}
+#Calculate and plot network
+partial_spearman_psp_swn_Graph_lassoall <- qgraph::qgraph(df_psp_swn_partial_spearman_corMatall, graph = "glasso", layout = "spring", tuning = 0.5, sampleSize = nrow(psp_swn_allomit), minimum = 0, maximum = 1, details = TRUE, esize = 20, lambda.min.ratio = 0.01,  cut = 0.15, groups =  list("psp" = 1:4, "swn" = 5:24), nodeNames = names(psp_swn_allomit), legend.cex = 0.45, vsize = 8, esize = 25, palette = 'pastel', posCol = "blue", negCol = "red",color = c("red", "yellow", "grey", "blue"), borders = FALSE, vTrans = 200, details = TRUE)
+```
+```{r}
+partial_kendall_psp_swn_Graph_lassoall <- qgraph::qgraph(df_psp_swn_partial_kendall_corMatall, graph = "glasso", layout = "spring", tuning = 0.5, sampleSize = nrow(psp_swn_allomit), minimum = 0, maximum = 1, details = TRUE, esize = 20, lambda.min.ratio = 0.01,  cut = 0.15, groups =  list("psp" = 1:4, "swn" = 5:24), nodeNames = names(psp_swn_allomit), legend.cex = 0.45, vsize = 8, esize = 25, palette = 'pastel', posCol = "blue", negCol = "red",color = c("red", "yellow", "grey", "blue"), borders = FALSE, vTrans = 200, details = TRUE)
+```
+
+
+
+
+```{r}
+partial_pearson_small_scl_panss_Graph_lassoall <- qgraph::qgraph(df_small_scl_panss_partial_pearson_corMatall, graph = "glasso", layout = "spring", tuning = 0.5, sampleSize = nrow(small_scl_panss_data_allomit), minimum = 0, maximum = 1, details = TRUE, esize = 20, lambda.min.ratio = 0.01,  cut = 0.15, groups =  list("scl" = 1:9, "scl" = 10:13), nodeNames = names(small_scl_panss_data_allomit), legend.cex = 0.45, vsize = 8, esize = 25, palette = 'pastel', posCol = "blue", negCol = "red",color = c("red", "yellow", "grey", "blue"), borders = FALSE, vTrans = 200, details = TRUE)
+
+```
+
+
+```{r}
+small_scl_cgi_Graph_lassoall = qgraph::qgraph(small_scl_cgi_data_allomit_corMatall, graph = "glasso", layout = "spring", tuning = 0.5, sampleSize = nrow(small_scl_cgi_data_allomit), minimum = 0, maximum = 1, details = TRUE, esize = 20, lambda.min.ratio = 0.01,  cut = 0.15, groups =  list("scl" = 1:9, "cgi" = 10:13), nodeNames = names(small_scl_cgi_data_allomit), legend.cex = 0.45, vsize = 8, esize = 25, palette = 'pastel', posCol = "blue", negCol = "red",color = c("red", "yellow", "grey", "blue"), borders = FALSE, vTrans = 200, details = TRUE)
+```
+
+
+```{r}
+partial_spearman_small_scl_cgi_Graph_lassoall = qgraph::qgraph(df_small_scl_cgi_partial_spearman_corMatall, graph = "glasso", layout = "spring", tuning = 0.5, sampleSize = nrow(small_scl_cgi_data_allomit), minimum = 0, maximum = 1, details = TRUE, esize = 20, lambda.min.ratio = 0.01,  cut = 0.15, groups =  list("scl" = 1:9, "cgi" = 10:13), nodeNames = names(small_scl_cgi_data_allomit), legend.cex = 0.45, vsize = 8, esize = 25, palette = 'pastel', posCol = "blue", negCol = "red",color = c("red", "yellow", "grey", "blue"), borders = FALSE, vTrans = 200, details = TRUE)
+```
+
+
+```{r}
+partial_kendall_small_scl_cgi_Graph_lassoall = qgraph::qgraph(df_small_scl_cgi_partial_kendall_corMatall, graph = "glasso", layout = "spring", tuning = 0.5, sampleSize = nrow(small_scl_cgi_data_allomit), minimum = 0, maximum = 1, details = TRUE, esize = 20, lambda.min.ratio = 0.01,  cut = 0.15, groups =  list("scl" = 1:9, "cgi" = 10:13), nodeNames = names(small_scl_cgi_data_allomit), legend.cex = 0.45, vsize = 8, esize = 25, palette = 'pastel', posCol = "blue", negCol = "red",color = c("red", "yellow", "grey", "blue"), borders = FALSE, vTrans = 200, details = TRUE)
+```
+
