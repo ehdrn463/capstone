@@ -4,7 +4,8 @@
 
 ------------
 
-결과 위주로 설명드리고, 연구 동기 및 방법론은 하단에 기재하겠습니다.
+결과 위주로 설명드리고, 연구 동기 및 방법론은 하단에 기재하겠습니다.<br>
+PPT 슬라이드가 편하신 분은 최하단으로 내리셔서, PPT 참고하시면 됩니다.<br>
 
 ------------
 
@@ -15,6 +16,7 @@
 4. 결론 및 제언
 5. 과제 선정 배경 및 필요성
 6. 과제 수행 방법
+7. PPT 슬라이드
 
 ------------
 
@@ -97,3 +99,31 @@ Strength 기준으로 노드 중심성이 높게 나온 변수들을 추려 관�
       - partial correlation을 이용해 두 변수의 정확한 관계를 측정하고, 대규모 데이터셋에도 이용 가능하다.<br>
       - 연구자들이 예측, 이론화하지 못한 관계를 발견할 수 있다.<br>
     - 다) Strength (Centrality 척도 중 하나): 노드의 중요도를 파악하는 방법 중 하나로 가장 직관적이다. 노드에 연결된 다른 노드의 수, 가중치의 합으로 계산된다. 노드들 중에서 다른 노드에 큰 영향력을 미치는 것을 파악할 수 있다.<br>
+
+------------
+
+### 7. PPT 슬라이드
+![슬라이드1](https://user-images.githubusercontent.com/41279466/123584086-b8bc5900-d81b-11eb-963d-f5843103ae68.JPG)
+![슬라이드2](https://user-images.githubusercontent.com/41279466/123584090-b9ed8600-d81b-11eb-90a3-26a63b6d1a7b.JPG)
+![슬라이드3](https://user-images.githubusercontent.com/41279466/123584091-ba861c80-d81b-11eb-989b-5c533c294115.JPG)
+![슬라이드4](https://user-images.githubusercontent.com/41279466/123584092-ba861c80-d81b-11eb-9ef0-ab0d6801257b.JPG)
+![슬라이드5](https://user-images.githubusercontent.com/41279466/123584095-bb1eb300-d81b-11eb-94b1-7d8a03f96b5c.JPG)
+![슬라이드6](https://user-images.githubusercontent.com/41279466/123584097-bbb74980-d81b-11eb-89b6-c16baa64c4dd.JPG)
+![슬라이드7](https://user-images.githubusercontent.com/41279466/123584098-bbb74980-d81b-11eb-965c-fa42222e9d35.JPG)
+![슬라이드8](https://user-images.githubusercontent.com/41279466/123584099-bc4fe000-d81b-11eb-9106-7282e30636ae.JPG)
+![슬라이드9](https://user-images.githubusercontent.com/41279466/123584100-bc4fe000-d81b-11eb-9ad9-6298d05bbffe.JPG)
+![슬라이드10](https://user-images.githubusercontent.com/41279466/123584103-bce87680-d81b-11eb-9531-4232fc546981.JPG)
+![슬라이드11](https://user-images.githubusercontent.com/41279466/123584105-bce87680-d81b-11eb-86a2-b668a3ca7f2b.JPG)
+![슬라이드12](https://user-images.githubusercontent.com/41279466/123584107-bd810d00-d81b-11eb-8c80-4c2fbc1a6a6a.JPG)
+![슬라이드13](https://user-images.githubusercontent.com/41279466/123584108-be19a380-d81b-11eb-9ee0-ad0c6eab28b3.JPG)
+![슬라이드14](https://user-images.githubusercontent.com/41279466/123584110-be19a380-d81b-11eb-821b-4bf39720dac0.JPG)
+![슬라이드15](https://user-images.githubusercontent.com/41279466/123584111-beb23a00-d81b-11eb-8246-56d4b0ace5bb.JPG)
+![슬라이드16](https://user-images.githubusercontent.com/41279466/123584112-beb23a00-d81b-11eb-91fb-b7fb5bd1c668.JPG)
+![슬라이드17](https://user-images.githubusercontent.com/41279466/123584113-bf4ad080-d81b-11eb-934c-e3ebd4b00e82.JPG)
+![슬라이드18](https://user-images.githubusercontent.com/41279466/123584115-bfe36700-d81b-11eb-8af6-5f6d475c95ae.JPG)
+![슬라이드19](https://user-images.githubusercontent.com/41279466/123584116-bfe36700-d81b-11eb-8e7f-13d1bbf5b1b6.JPG)
+![슬라이드20](https://user-images.githubusercontent.com/41279466/123584117-c07bfd80-d81b-11eb-9cd8-49e94d98155f.JPG)
+![슬라이드21](https://user-images.githubusercontent.com/41279466/123584118-c07bfd80-d81b-11eb-8b2a-f9941e0fb197.JPG)
+![슬라이드22](https://user-images.githubusercontent.com/41279466/123584119-c1149400-d81b-11eb-9222-d6938b981d15.JPG)
+
+
