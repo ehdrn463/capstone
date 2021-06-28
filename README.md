@@ -1,9 +1,23 @@
-# capstone
+# 경희대학교 2021-1학기 소프트웨어융합캡스톤디자인
+## 주제: 그래프 이론 기반 정신질환 증상 점수 네트워크 분석
+###      :정신진단 검사, 임상 증상 평가 척도, 조현병 중증도 비교를 중심으로
 
-3. 수행결과
+결과 위주로 설명드리고, 연구 동기 및 방법론은 하단에 기재하겠습니다.
+
+### 목차
+#### 1. 수행결과
+#### 2. 최종결과물 주요특징 및 설명
+#### 3. 기대효과 및 활용방안
+#### 4. 결론 및 제언
+#### 5. 과제 선정 배경 및 필요성
+#### 6. 과제 수행 방법
+
+
+### 1. 수행결과
    가. 과제수행 결과
       1) 주관적 정신진단 검사(SCL) - 정신질환 증상(PANSS) Network plot 비교
          Gaussian Graphical Model인 HUGE와 Correlation network 방법인 Spearman, Kendall을 비교했을 때 전체적인 흐름에서 큰 차이가 없었다. 다만 음의 상관관계를 표현하는 edge가 correlation network에서 약해졌다.
+         ![Network_-SCL-PANSS](https://user-images.githubusercontent.com/41279466/123580980-e43c4500-d815-11eb-9d8a-9154175aa67c.jpeg)
 
 
       2) 주관적 정신진단 검사(SCL) - 조현병 중증도 평가(CGI) Network plot 비교
