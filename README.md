@@ -27,10 +27,10 @@
      ![Network_-SCL-CGI](https://user-images.githubusercontent.com/41279466/123580979-e3a3ae80-d815-11eb-8af5-85b49293f887.jpeg)<br><br>
   - **3) 주관적 정신진단 검사(SCL) - 정신질환 증상(PANSS) 노드 중심성 Strength 순위**<br> 
      - Strength 척도 기준으로 노드 중심성이 가장 높게 나타난 4개의 변수는 모두 정신질환 증상 (PANSS)였다.<br>  
-     ![Strength_-SCL-PANSS_1](https://user-images.githubusercontent.com/41279466/123580977-e2728180-d815-11eb-9000-0eb46a048534.jpeg=250x)<br><br>  
+     ![Strength_-SCL-PANSS_1](https://user-images.githubusercontent.com/41279466/123580977-e2728180-d815-11eb-9000-0eb46a048534.jpeg =500px)<br><br>  
   - **4) 주관적 정신진단 검사(SCL) - 조현병 중증도 평가(CGI) 노드 중심성 Strength 순위**<br> 
      - 주관적 정신진단 검사(SCL)와 조현병 중증도 평가(CGI)에서는 SCL 변수인 ‘긴장감, 우울감, 예민성, 정신분열’이 중요했다.<br>   
-     ![Strength_-SCL-CGI](https://user-images.githubusercontent.com/41279466/123580981-e4d4db80-d815-11eb-870c-a6800a56f785.jpeg=250x)<br><br>      
+     ![Strength_-SCL-CGI](https://user-images.githubusercontent.com/41279466/123580981-e4d4db80-d815-11eb-870c-a6800a56f785.jpeg =500px)<br><br>      
 
 ------------
 
