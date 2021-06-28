@@ -19,17 +19,17 @@
 ------------
 
 ### 1. 수행결과
-  **1) 주관적 정신진단 검사(SCL) - 정신질환 증상(PANSS) Network plot 비교**<br> 
+  - **1) 주관적 정신진단 검사(SCL) - 정신질환 증상(PANSS) Network plot 비교**<br> 
      - Gaussian Graphical Model인 HUGE와 Correlation network 방법인 Spearman, Kendall을 비교했을 때 전체적인 흐름에서 큰 차이가 없었다. 다만 음의 상관관계를 표현하는 edge가 correlation network에서 약해졌다.  
      ![Network_-SCL-PANSS](https://user-images.githubusercontent.com/41279466/123580980-e43c4500-d815-11eb-9d8a-9154175aa67c.jpeg)<br><br>
-  **2) 주관적 정신진단 검사(SCL) - 조현병 중증도 평가(CGI) Network plot 비교**<br> 
+  - **2) 주관적 정신진단 검사(SCL) - 조현병 중증도 평가(CGI) Network plot 비교**<br> 
      - SCL-PANSS처럼 correlation에 따른 결과에 큰 차이가 없었다. 음의 상관관계가 correlation에서 더 약했다.<br>
      ![Network_-SCL-CGI](https://user-images.githubusercontent.com/41279466/123580979-e3a3ae80-d815-11eb-8af5-85b49293f887.jpeg)<br><br>
-  **3) 주관적 정신진단 검사(SCL) - 정신질환 증상(PANSS) 노드 중심성 Strength 순위**<br> 
+  - **3) 주관적 정신진단 검사(SCL) - 정신질환 증상(PANSS) 노드 중심성 Strength 순위**<br> 
      - Strength 척도 기준으로 노드 중심성이 가장 높게 나타난 4개의 변수는 모두 정신질환 증상 (PANSS)였다.<br>  
      ![Strength_-SCL-PANSS_1](https://user-images.githubusercontent.com/41279466/123580977-e2728180-d815-11eb-9000-0eb46a048534.jpeg)<br><br>  
-  **4) 주관적 정신진단 검사(SCL) - 조현병 중증도 평가(CGI) 노드 중심성 Strength 순위**<br> 
-    - 주관적 정신진단 검사(SCL)와 조현병 중증도 평가(CGI)에서는 SCL 변수인 ‘긴장감, 우울감, 예민성, 정신분열’이 중요했다.<br>   
+  - **4) 주관적 정신진단 검사(SCL) - 조현병 중증도 평가(CGI) 노드 중심성 Strength 순위**<br> 
+     - 주관적 정신진단 검사(SCL)와 조현병 중증도 평가(CGI)에서는 SCL 변수인 ‘긴장감, 우울감, 예민성, 정신분열’이 중요했다.<br>   
      ![Strength_-SCL-CGI](https://user-images.githubusercontent.com/41279466/123580981-e4d4db80-d815-11eb-870c-a6800a56f785.jpeg)<br><br>      
 
 ------------
