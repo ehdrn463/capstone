@@ -30,7 +30,8 @@
      ![Strength_-SCL-PANSS_1](https://user-images.githubusercontent.com/41279466/123580977-e2728180-d815-11eb-9000-0eb46a048534.jpeg){: width=75% }<br><br>  
   - **4) 주관적 정신진단 검사(SCL) - 조현병 중증도 평가(CGI) 노드 중심성 Strength 순위**<br> 
      - 주관적 정신진단 검사(SCL)와 조현병 중증도 평가(CGI)에서는 SCL 변수인 ‘긴장감, 우울감, 예민성, 정신분열’이 중요했다.<br>   
-     ![Strength_-SCL-CGI](https://user-images.githubusercontent.com/41279466/123580981-e4d4db80-d815-11eb-870c-a6800a56f785.jpeg){: width=75% }<br><br>      
+     <img src="https://user-images.githubusercontent.com/41279466/123580981-e4d4db80-d815-11eb-870c-a6800a56f785.jpeg" alt="Kitten" title="A cute kitten" width="150" height="100" />
+           
 
 ------------
 
